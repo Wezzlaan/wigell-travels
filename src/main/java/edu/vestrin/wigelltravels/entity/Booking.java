@@ -19,8 +19,8 @@ public class Booking {
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "travel_id")
-    private Travel travel;
+    @JoinColumn(name = "destination_id")
+    private Destination destination;
 
     @Column(name = "departure_date", nullable = false)
     private LocalDate departureDate;
@@ -44,8 +44,8 @@ public class Booking {
     private BigDecimal totalPricePLN;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "travel_status", nullable = false)
-    private TravelStatus status;
+    @Column(name = "booking_status", nullable = false)
+    private BookingStatus status;
 
     @Column(name = "booked_at")
     private LocalDateTime bookedAt;
@@ -53,10 +53,10 @@ public class Booking {
     protected Booking() {
     }
 
-    public Booking(Customer customer, Travel travel, LocalDate departureDate, int numOfWeeks, String hotelName,
+    public Booking(Customer customer, Destination destination, LocalDate departureDate, int numOfWeeks, String hotelName,
                    String city, String country, BigDecimal totalPriceSEK, BigDecimal totalPricePLN) {
         this.customer = customer;
-        this.travel = travel;
+        this.destination = destination;
         this.departureDate = departureDate;
         this.numOfWeeks = numOfWeeks;
         this.hotelName = hotelName;
@@ -64,7 +64,7 @@ public class Booking {
         this.country = country;
         this.totalPriceSEK = totalPriceSEK;
         this.totalPricePLN = totalPricePLN;
-        this.status = TravelStatus.CONFIRMED;
+        this.status = BookingStatus.CONFIRMED;
     }
 
     public Long getId() {
@@ -84,12 +84,12 @@ public class Booking {
         this.customer = customer;
     }
 
-    public Travel getTravel() {
-        return travel;
+    public Destination getDestination() {
+        return destination;
     }
 
-    public void setTravel(Travel travel) {
-        this.travel = travel;
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 
     public LocalDate getDepartureDate() {
@@ -148,11 +148,11 @@ public class Booking {
         this.totalPricePLN = totalPricePLN;
     }
 
-    public TravelStatus getStatus() {
+    public BookingStatus getStatus() {
         return status;
     }
 
-    public void setStatus(TravelStatus status) {
+    public void setStatus(BookingStatus status) {
         this.status = status;
     }
 
