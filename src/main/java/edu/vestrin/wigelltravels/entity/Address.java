@@ -27,7 +27,7 @@ public class Address {
     @Column(nullable = false, length = 5)
     private String postalCode;
 
-    @OneToMany(mappedBy = "addresses")
+    @OneToMany(mappedBy = "address")
     private Set<Customer> customers = new HashSet<>();
 
     private LocalDateTime createdAt;

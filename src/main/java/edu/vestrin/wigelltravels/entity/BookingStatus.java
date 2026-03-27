@@ -1,6 +1,6 @@
 package edu.vestrin.wigelltravels.entity;
 
-public enum TravelStatus {
+public enum BookingStatus {
     CONFIRMED,
     CANCELLED,
     MODIFIED

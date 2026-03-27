@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "travels")
-public class Travel {
+@Table(name = "destinations")
+public class Destination {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,16 +22,16 @@ public class Travel {
     @Column(nullable = false, length = 50)
     private String country;
 
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 10, scale = 2, nullable = false)
     private BigDecimal pricePerWeek;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    protected Travel() {}
+    protected Destination() {}
 
-    public Travel(String hotelName, String city, String country, BigDecimal pricePerWeek) {
+    public Destination(String hotelName, String city, String country, BigDecimal pricePerWeek) {
         this.hotelName = hotelName;
         this.city = city;
         this.country = country;
