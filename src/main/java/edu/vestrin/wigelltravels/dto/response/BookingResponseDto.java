@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public record BookingResponseDto(
         Long id,
-        CustomerResponseDto customer,
+        Long customerId,
         Long destinationId,
         LocalDate departureDate,
         int numOfWeeks,
