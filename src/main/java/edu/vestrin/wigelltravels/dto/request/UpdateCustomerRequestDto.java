@@ -17,10 +17,6 @@ public record UpdateCustomerRequestDto(
         String lastName,
 
         @NotBlank
-        @Pattern(regexp = "^\\d{8}-\\d{4}$", message = "Invalid SSN format, expected: YYYYMMDD-XXXX")
-        String socSecNum,
-
-        @NotBlank
         @Pattern(regexp = "^[+\\d][\\d\\s\\-]{6,14}$", message = "Invalid phone number")
         String phoneNum,
 

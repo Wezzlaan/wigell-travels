@@ -28,7 +28,7 @@ public class Customer {
     @Column(name = "phone_number", nullable = false, unique = true, length = 12)
     private String phoneNum;
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -38,8 +38,9 @@ public class Customer {
 
     protected Customer() {}
 
-    public Customer(String firstName, String lastName, String socSecNum,
+    public Customer(String keycloakId, String firstName, String lastName, String socSecNum,
                     String phoneNum, Address address) {
+        this.keycloakId = keycloakId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.socSecNum = socSecNum;
