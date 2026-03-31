@@ -1,5 +1,6 @@
 package edu.vestrin.wigelltravels.service;
 
+import com.groupc.shared.exception.ResourceNotFoundException;
 import edu.vestrin.wigelltravels.dto.request.BookingRequestDto;
 import edu.vestrin.wigelltravels.dto.request.PatchBookingRequestDto;
 import edu.vestrin.wigelltravels.dto.response.BookingResponseDto;
@@ -40,10 +41,10 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto create(BookingRequestDto request, String keycloakId) {
         var customer = customerRepo.findCustomerByKeycloakId(keycloakId)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         var destination = destinationRepo.findById(request.destinationId())
-                .orElseThrow(() -> new EntityNotFoundException("Destination not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Destination not found"));
 
         BigDecimal totalSEK = destination.getPricePerWeek()
                 .multiply(BigDecimal.valueOf(request.numOfWeeks()));
@@ -58,13 +59,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDto patch(Long bookingId, PatchBookingRequestDto request) {
         var booking = bookingRepo.findById(bookingId)
-                .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
         if (request.numOfWeeks() != null) booking.setNumOfWeeks(request.numOfWeeks());
         if (request.hotelName() != null) booking.setHotelName(request.hotelName());
         if (request.destinationId() != null) {
             var destination = destinationRepo.findById(request.destinationId())
-                    .orElseThrow(() -> new EntityNotFoundException("Destination not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Destination not found"));
             booking.setDestination(destination);
             booking.setCity(destination.getCity());
             booking.setCountry(destination.getCountry());
@@ -72,7 +73,7 @@ public class BookingServiceImpl implements BookingService {
             BigDecimal newSEK = destination.getPricePerWeek()
                     .multiply(BigDecimal.valueOf(booking.getNumOfWeeks()));
             booking.setTotalPriceSEK(newSEK);
-            booking.setTotalPricePLN(newSEK.multiply(BigDecimal.valueOf(0.40)));
+            booking.setTotalPricePLN(newSEK.multiply(BigDecimal.valueOf(0.40))); // TODO: Replace with call to Currency Converter microservice.
         }
 
         return mapper.toResponse(bookingRepo.save(booking));

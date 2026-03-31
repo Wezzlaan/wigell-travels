@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface DestinationService {
 
-    List<DestinationResponseDto> list();
+    List<DestinationResponseDto> findAll();
 
     DestinationResponseDto create(DestinationRequestDto request);
 
