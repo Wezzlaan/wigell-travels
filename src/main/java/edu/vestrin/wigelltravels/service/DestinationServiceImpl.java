@@ -1,5 +1,6 @@
 package edu.vestrin.wigelltravels.service;
 
+import com.groupc.shared.exception.ResourceNotFoundException;
 import edu.vestrin.wigelltravels.dto.request.DestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.request.UpdateDestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.response.DestinationResponseDto;
@@ -26,7 +27,7 @@ public class DestinationServiceImpl implements DestinationService{
     @Override
     @Transactional
     @PreAuthorize("hasRole('USER')")
-    public List<DestinationResponseDto> list() {
+    public List<DestinationResponseDto> findAll() {
         return destinationRepo.findAll().stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -46,7 +47,7 @@ public class DestinationServiceImpl implements DestinationService{
     @PreAuthorize("hasRole('ADMIN')")
     public DestinationResponseDto update(Long id, UpdateDestinationRequestDto request) {
         var destination = destinationRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Could not find destination with id '%d'".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find destination with id '%d'".formatted(id)));
         var updated = destinationRepo.save(mapper.applyUpdate(destination, request));
 
         return mapper.toResponse(updated);
@@ -57,7 +58,7 @@ public class DestinationServiceImpl implements DestinationService{
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long id) {
         var destination = destinationRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Could not find destination with id '%d'".formatted(id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find destination with id '%d'".formatted(id)));
         destinationRepo.delete(destination);
     }
 }
