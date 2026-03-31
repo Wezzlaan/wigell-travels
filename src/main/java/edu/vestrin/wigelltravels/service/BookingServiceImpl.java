@@ -1,5 +1,6 @@
 package edu.vestrin.wigelltravels.service;
 
+import com.groupc.shared.exception.AccessDeniedException;
 import com.groupc.shared.exception.ResourceNotFoundException;
 import edu.vestrin.wigelltravels.dto.request.BookingRequestDto;
 import edu.vestrin.wigelltravels.dto.request.PatchBookingRequestDto;
