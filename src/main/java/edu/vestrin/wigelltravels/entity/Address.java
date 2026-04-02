@@ -27,9 +27,6 @@ public class Address {
     @Column(nullable = false, length = 5)
     private String postalCode;
 
-    @OneToMany(mappedBy = "address")
-    private Set<Customer> customers = new HashSet<>();
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
@@ -84,13 +81,13 @@ public class Address {
         this.postalCode = postalCode;
     }
 
-    public Set<Customer> getCustomers() {
+ /*   public Set<Customer> getCustomers() {
         return customers;
     }
 
     public void setCustomers(Set<Customer> customers) {
         this.customers = customers;
-    }
+    }*/
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "customers")
@@ -22,18 +24,21 @@ public class Customer {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "social_security_num", nullable = false, unique = true, length = 12)
+    @Column(name = "social_security_num", nullable = false, unique = true, length = 13)
     private String socSecNum;
 
     @Column(name = "phone_number", nullable = false, unique = true, length = 12)
     private String phoneNum;
     
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "customer_addresses",
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id")
+    )
+    private List<Address> addresses = new ArrayList<>();
 
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 
     protected Customer() {}
@@ -45,7 +50,7 @@ public class Customer {
         this.lastName = lastName;
         this.socSecNum = socSecNum;
         this.phoneNum = phoneNum;
-        this.address = address;
+        this.addresses.add(address);
     }
 
     public Long getId() {
@@ -97,12 +102,12 @@ public class Customer {
         this.phoneNum = phoneNum;
     }
 
-    public Address getAddress() {
-        return address;
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 
     public LocalDateTime getCreatedAt() {

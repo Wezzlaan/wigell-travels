@@ -1,11 +1,23 @@
 package edu.vestrin.wigelltravels.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record CustomerRequestDto(
+public record CustomerWithUserRequestDto(
+
+        @NotBlank
+        @Email(message = "Incorrect email format")
+        String email,
+
+        @NotBlank
+        @Size(max = 20)
+        String username,
+
+        @Size(min = 8, max = 60)
+        String password,
+
         @NotBlank
         @Size(max = 50)
         @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Invalid characters in first name")

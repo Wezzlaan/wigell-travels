@@ -18,9 +18,9 @@ public record UpdateCustomerRequestDto(
 
         @NotBlank
         @Pattern(regexp = "^[+\\d][\\d\\s\\-]{6,14}$", message = "Invalid phone number")
-        String phoneNum,
+        String phoneNum
 
-        @NotBlank
+        /*@NotBlank
         @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Invalid characters in country")
         @Size(max = 50)
         String country,
@@ -37,6 +37,6 @@ public record UpdateCustomerRequestDto(
 
         @NotBlank
         @Pattern(regexp = "^\\d{5}$", message = "Postal code must be exactly 5 digits")
-        String postalCode
+        String postalCode*/
 ) {
 }
