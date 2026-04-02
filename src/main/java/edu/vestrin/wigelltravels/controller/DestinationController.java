@@ -23,7 +23,7 @@ public class DestinationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') OR hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<DestinationResponseDto>> list() {
         return ResponseEntity.ok(service.findAll());
     }

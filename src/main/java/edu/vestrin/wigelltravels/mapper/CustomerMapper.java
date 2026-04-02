@@ -1,18 +1,17 @@
 package edu.vestrin.wigelltravels.mapper;
 
-import edu.vestrin.wigelltravels.dto.request.CustomerRequestDto;
+import edu.vestrin.wigelltravels.dto.request.CustomerWithUserRequestDto;
 import edu.vestrin.wigelltravels.dto.request.UpdateCustomerRequestDto;
 import edu.vestrin.wigelltravels.dto.response.AddressCustomerResponseDto;
 import edu.vestrin.wigelltravels.dto.response.CustomerResponseDto;
 import edu.vestrin.wigelltravels.entity.Address;
 import edu.vestrin.wigelltravels.entity.Customer;
-import edu.vestrin.wigelltravels.repository.CustomerRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CustomerMapper {
 
-    public Customer toEntity(CustomerRequestDto request, String keycloakId) {
+    public Customer toEntity(CustomerWithUserRequestDto request, String keycloakId) {
         var address = new Address(
                 request.country(),
                 request.city(),
@@ -31,13 +30,14 @@ public class CustomerMapper {
     }
 
     public CustomerResponseDto toResponse(Customer customer) {
-        var addressResponse = new AddressCustomerResponseDto(
-                customer.getAddress().getId(),
-                customer.getAddress().getCountry(),
-                customer.getAddress().getCity(),
-                customer.getAddress().getStreet(),
-                customer.getAddress().getPostalCode()
-        );
+        var addresses = customer.getAddresses().stream()
+                .map(address -> new AddressCustomerResponseDto(
+                        address.getId(),
+                        address.getCountry(),
+                        address.getCity(),
+                        address.getStreet(),
+                        address.getPostalCode()
+                )).toList();
 
         return new CustomerResponseDto(
                 customer.getId(),
@@ -46,7 +46,7 @@ public class CustomerMapper {
                 customer.getLastName(),
                 customer.getSocSecNum(),
                 customer.getPhoneNum(),
-                addressResponse
+                addresses
         );
     }
 
@@ -54,11 +54,6 @@ public class CustomerMapper {
         customer.setFirstName(request.firstName());
         customer.setLastName(request.lastName());
         customer.setPhoneNum(request.phoneNum());
-
-        customer.getAddress().setCountry(request.country());
-        customer.getAddress().setCity(request.city());
-        customer.getAddress().setStreet(request.street());
-        customer.getAddress().setPostalCode(request.postalCode());
 
         return customer;
     }

@@ -1,12 +1,11 @@
 package edu.vestrin.wigelltravels.controller;
 
 import edu.vestrin.wigelltravels.dto.request.AddressRequestDto;
-import edu.vestrin.wigelltravels.dto.request.CustomerRequestDto;
+import edu.vestrin.wigelltravels.dto.request.CustomerWithUserRequestDto;
 import edu.vestrin.wigelltravels.dto.request.UpdateCustomerRequestDto;
 import edu.vestrin.wigelltravels.dto.response.CustomerResponseDto;
 import edu.vestrin.wigelltravels.service.CustomerService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -33,11 +32,9 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerResponseDto> create(
-            @Valid @RequestBody CustomerRequestDto request,
-            JwtAuthenticationToken token) {
+            @Valid @RequestBody CustomerWithUserRequestDto request) {
 
-        String keycloakId = token.getToken().getSubject();
-        var created = service.create(request, keycloakId);
+        var created = service.create(request);
         var location = URI.create("/api/v1/customers/" + created.id());
         return ResponseEntity.created(location).body(created);
     }
