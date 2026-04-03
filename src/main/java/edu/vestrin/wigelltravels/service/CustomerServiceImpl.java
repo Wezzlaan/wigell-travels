@@ -10,6 +10,8 @@ import edu.vestrin.wigelltravels.entity.Customer;
 import edu.vestrin.wigelltravels.mapper.CustomerMapper;
 import edu.vestrin.wigelltravels.repository.AddressRepository;
 import edu.vestrin.wigelltravels.repository.CustomerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ import java.util.List;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
+
+    private final static Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     private final CustomerRepository customerRepo;
     private final AddressRepository addressRepo;
@@ -32,8 +36,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CustomerResponseDto> findAll() {
+        logger.info("findAll() - Requesting all customers...");
         return customerRepo.findAll().stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -42,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerResponseDto create(CustomerWithUserRequestDto request) {
-
+        logger.info("create - Requesting creation of Customer and Keycloak User...");
         String keycloakId = keycloakUserService.createUserKeycloak(
                 request.email(),
                 request.username(),
@@ -53,12 +58,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         var customer = mapper.toEntity(request, keycloakId);
         var saved = customerRepo.save(customer);
+        logger.debug("Customer persisted with ID: {}", saved.getId());
         return mapper.toResponse(saved);
     }
 
     @Override
     @Transactional
     public CustomerResponseDto update(Long customerId, UpdateCustomerRequestDto request) {
+        logger.info("update() - Requesting update of Customer with ID: {}...", customerId);
         var customer = findCustomer(customerId);
 
         keycloakUserService.updateUser(
@@ -68,13 +75,15 @@ public class CustomerServiceImpl implements CustomerService {
         );
 
         var updated = customerRepo.save(mapper.applyUpdate(customer, request));
-
+        logger.debug("Update of Customer with ID: {} has been persisted.", updated.getId());
         return mapper.toResponse(updated);
     }
 
     @Override
     @Transactional
     public CustomerResponseDto createAddress(Long customerId, AddressRequestDto request) {
+        logger.info("createAddress - Requesting creation of Address for Customer with ID: {}.", customerId);
+
         var customer = findCustomer(customerId);
 
         var address = new Address(
@@ -84,25 +93,33 @@ public class CustomerServiceImpl implements CustomerService {
                 request.postalCode()
         );
         addressRepo.save(address);
+        logger.debug("Address persisted with ID: {}", address.getId());
 
         customer.getAddresses().add(address);
 
-        return mapper.toResponse(customerRepo.save(customer));
+        var saved = mapper.toResponse(customerRepo.save(customer));
+        logger.debug("Address added and persisted to Customer with ID: {}", saved.id());
+        return saved;
     }
 
     @Override
     @Transactional
     public void delete(Long customerId) {
+        logger.info("Delete() - Requesting deletion of Customer with ID: {}", customerId );
         var customer = findCustomer(customerId);
 
         keycloakUserService.deleteUser(customer.getKeycloakId());
 
         customerRepo.delete(customer);
+        logger.debug("Customer with ID: {} has successfully been deleted.", customerId);
     }
 
     @Override
     @Transactional
     public void deleteAddress(Long customerId, Long addressId) {
+        logger.info("deleteAddress() - Requesting deletion of Address with ID: {} belonging to Customer with ID: {}",
+                addressId, customerId);
+
         var customer = findCustomer(customerId);
 
         var addressToRemove = customer.getAddresses().stream()
@@ -114,9 +131,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         customerRepo.save(customer);
         addressRepo.delete(addressToRemove);
+
+        logger.debug("Address with ID: {} has been successfully deleted and removed from Customer with ID: {}",
+                addressId, customerId);
     }
 
     private Customer findCustomer(Long customerId) {
+        logger.debug("Searching for Customer with ID: {}...", customerId);
         return customerRepo.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Could not find customer with id '%d'".formatted(customerId)));
     }
