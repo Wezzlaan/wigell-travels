@@ -27,7 +27,7 @@ public class Customer {
     @Column(name = "social_security_num", nullable = false, unique = true, length = 13)
     private String socSecNum;
 
-    @Column(name = "phone_number", nullable = false, unique = true, length = 12)
+    @Column(name = "phone_number", nullable = false, unique = true, length = 16)
     private String phoneNum;
     
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
