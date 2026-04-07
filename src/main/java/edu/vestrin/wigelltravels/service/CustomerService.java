@@ -11,13 +11,13 @@ public interface CustomerService {
 
     List<CustomerResponseDto> findAll();
 
-    CustomerResponseDto create(CustomerWithUserRequestDto request);
+    CustomerResponseDto createCustomer(CustomerWithUserRequestDto request);
 
-    CustomerResponseDto update(Long id, UpdateCustomerRequestDto request);
+    CustomerResponseDto updateCustomer(Long id, UpdateCustomerRequestDto request);
 
     CustomerResponseDto createAddress(Long customerId, AddressRequestDto request);
 
-    void delete(Long id);
+    void deleteCustomer(Long id);
 
     void deleteAddress(Long customerId, Long addressId);
 }

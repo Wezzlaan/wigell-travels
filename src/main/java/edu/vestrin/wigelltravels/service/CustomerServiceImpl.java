@@ -7,6 +7,8 @@ import edu.vestrin.wigelltravels.dto.request.UpdateCustomerRequestDto;
 import edu.vestrin.wigelltravels.dto.response.CustomerResponseDto;
 import edu.vestrin.wigelltravels.entity.Address;
 import edu.vestrin.wigelltravels.entity.Customer;
+import edu.vestrin.wigelltravels.exceptions.CustomerNotFoundException;
+import edu.vestrin.wigelltravels.exceptions.OwnershipConflictException;
 import edu.vestrin.wigelltravels.mapper.CustomerMapper;
 import edu.vestrin.wigelltravels.repository.AddressRepository;
 import edu.vestrin.wigelltravels.repository.CustomerRepository;
@@ -46,8 +48,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public CustomerResponseDto create(CustomerWithUserRequestDto request) {
-        logger.info("create - Requesting creation of Customer and Keycloak User...");
+    public CustomerResponseDto createCustomer(CustomerWithUserRequestDto request) {
+        logger.info("createCustomer - Requesting creation of Customer and Keycloak User...");
         String keycloakId = keycloakUserService.createUserKeycloak(
                 request.email(),
                 request.username(),
@@ -58,14 +60,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         var customer = mapper.toEntity(request, keycloakId);
         var saved = customerRepo.save(customer);
-        logger.debug("Customer persisted with ID: {}", saved.getId());
+        logger.info("Customer persisted with ID: {}", saved.getId());
         return mapper.toResponse(saved);
     }
 
     @Override
     @Transactional
-    public CustomerResponseDto update(Long customerId, UpdateCustomerRequestDto request) {
-        logger.info("update() - Requesting update of Customer with ID: {}...", customerId);
+    public CustomerResponseDto updateCustomer(Long customerId, UpdateCustomerRequestDto request) {
+        logger.info("updateCustomer() - Requesting updateCustomer of Customer with ID: {}...", customerId);
         var customer = findCustomer(customerId);
 
         keycloakUserService.updateUser(
@@ -75,7 +77,7 @@ public class CustomerServiceImpl implements CustomerService {
         );
 
         var updated = customerRepo.save(mapper.applyUpdate(customer, request));
-        logger.debug("Update of Customer with ID: {} has been persisted.", updated.getId());
+        logger.info("Update of Customer with ID: {} has been persisted.", updated.getId());
         return mapper.toResponse(updated);
     }
 
@@ -93,25 +95,25 @@ public class CustomerServiceImpl implements CustomerService {
                 request.postalCode()
         );
         addressRepo.save(address);
-        logger.debug("Address persisted with ID: {}", address.getId());
+        logger.info("Address persisted with ID: {}", address.getId());
 
         customer.getAddresses().add(address);
 
         var saved = mapper.toResponse(customerRepo.save(customer));
-        logger.debug("Address added and persisted to Customer with ID: {}", saved.id());
+        logger.info("Address added and persisted to Customer with ID: {}", saved.id());
         return saved;
     }
 
     @Override
     @Transactional
-    public void delete(Long customerId) {
+    public void deleteCustomer(Long customerId) {
         logger.info("Delete() - Requesting deletion of Customer with ID: {}", customerId );
         var customer = findCustomer(customerId);
 
         keycloakUserService.deleteUser(customer.getKeycloakId());
 
         customerRepo.delete(customer);
-        logger.debug("Customer with ID: {} has successfully been deleted.", customerId);
+        logger.info("Customer with ID: {} has successfully been deleted.", customerId);
     }
 
     @Override
@@ -125,7 +127,7 @@ public class CustomerServiceImpl implements CustomerService {
         var addressToRemove = customer.getAddresses().stream()
                 .filter(address -> address.getId().equals(addressId))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Address does not belong to this customer"));
+                .orElseThrow(() -> new OwnershipConflictException("Address does not belong to this customer"));
 
         customer.getAddresses().remove(addressToRemove);
 
@@ -139,6 +141,6 @@ public class CustomerServiceImpl implements CustomerService {
     private Customer findCustomer(Long customerId) {
         logger.debug("Searching for Customer with ID: {}...", customerId);
         return customerRepo.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Could not find customer with id '%d'".formatted(customerId)));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
     }
 }

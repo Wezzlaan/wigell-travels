@@ -4,6 +4,7 @@ import com.groupc.shared.exception.ResourceNotFoundException;
 import edu.vestrin.wigelltravels.dto.request.DestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.request.UpdateDestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.response.DestinationResponseDto;
+import edu.vestrin.wigelltravels.exceptions.DestinationNotFoundException;
 import edu.vestrin.wigelltravels.mapper.DestinationMapper;
 import edu.vestrin.wigelltravels.repository.DestinationRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -43,7 +44,7 @@ public class DestinationServiceImpl implements DestinationService{
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public DestinationResponseDto create(DestinationRequestDto request) {
-        logger.info("create() - Requesting creation of Destination: Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
+        logger.info("createCustomer() - Requesting creation of Destination: Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
                 request.hotelName(), request.city(), request.country(), request.pricePerWeek());
 
         var destination = mapper.toEntity(request);
@@ -57,12 +58,12 @@ public class DestinationServiceImpl implements DestinationService{
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public DestinationResponseDto update(Long id, UpdateDestinationRequestDto request) {
-        logger.info("update() - Requesting update of Destination with ID: {}. Requested values to update:" +
+        logger.info("updateCustomer() - Requesting updateCustomer of Destination with ID: {}. Requested values to updateCustomer:" +
                 "Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
                 id, request.hotelName(), request.city(), request.country(), request.pricePerWeek());
 
         var destination = destinationRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Could not find destination with id '%d'".formatted(id)));
+                .orElseThrow(() -> new DestinationNotFoundException(id));
         var updated = destinationRepo.save(mapper.applyUpdate(destination, request));
 
         logger.debug("Update of Destination with ID: {} has been persisted.", updated.getId());
@@ -73,9 +74,9 @@ public class DestinationServiceImpl implements DestinationService{
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void delete(Long id) {
-        logger.info("delete() - Requesting deletion of Destination with ID: {}.", id);
+        logger.info("deleteCustomer() - Requesting deletion of Destination with ID: {}.", id);
         var destination = destinationRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Could not find destination with id '%d'".formatted(id)));
+                .orElseThrow(() -> new DestinationNotFoundException(id));
         destinationRepo.delete(destination);
 
         logger.debug("Destination with ID: {} has successfully been deleted.", id);

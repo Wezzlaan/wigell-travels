@@ -1,5 +1,7 @@
 package edu.vestrin.wigelltravels.service;
 
+import edu.vestrin.wigelltravels.exceptions.KeycloakUserCreationException;
+import edu.vestrin.wigelltravels.exceptions.UserCreatedButNotFoundInKeycloakException;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -45,14 +47,15 @@ public class KeycloakUserService {
 
         logger.debug("Sending new User to Keycloak...");
         try (var response = usersResource.create(user)) {
-            if (response.getStatus() != 201) {
-                throw new RuntimeException("Failed to create user in Keycloak. Status: " + response.getStatus());
+            int status = response.getStatus();
+            if (status != 201) {
+                throw new KeycloakUserCreationException(status);
             }
         }
 
         List<UserRepresentation> searchResult = usersResource.searchByUsername(username, true);
         if(searchResult.isEmpty()) {
-            throw new RuntimeException("User created but could not be found in Keycloak.");
+            throw new UserCreatedButNotFoundInKeycloakException();
         }
 
         String newKeycloakId = searchResult.getFirst().getId();
