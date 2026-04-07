@@ -8,7 +8,6 @@ import edu.vestrin.wigelltravels.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,7 +33,7 @@ public class CustomerController {
     public ResponseEntity<CustomerResponseDto> create(
             @Valid @RequestBody CustomerWithUserRequestDto request) {
 
-        var created = service.create(request);
+        var created = service.createCustomer(request);
         var location = URI.create("/api/v1/customers/" + created.id());
         return ResponseEntity.created(location).body(created);
     }
@@ -44,12 +43,12 @@ public class CustomerController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateCustomerRequestDto request) {
 
-        return ResponseEntity.ok(service.update(id, request));
+        return ResponseEntity.ok(service.updateCustomer(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
+        service.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }
 

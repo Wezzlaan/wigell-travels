@@ -4159,7 +4159,7 @@ Caused by: java.sql.SQLSyntaxErrorException: Table 'wigell_travel_db.customers' 
 2026-03-31 17:29:30 [http-nio-8581-exec-3] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -4312,7 +4312,7 @@ java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 2026-03-31 17:30:27 [http-nio-8581-exec-7] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -4465,7 +4465,7 @@ java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 2026-03-31 17:34:36 [http-nio-8581-exec-9] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -4618,7 +4618,7 @@ java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 2026-03-31 17:36:10 [http-nio-8581-exec-1] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -4771,7 +4771,7 @@ java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 2026-03-31 17:37:26 [http-nio-8581-exec-2] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -4924,7 +4924,7 @@ java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 2026-03-31 17:41:55 [http-nio-8581-exec-8] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -5077,7 +5077,7 @@ java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 2026-03-31 17:44:34 [http-nio-8581-exec-1] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -5230,7 +5230,7 @@ java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 2026-03-31 17:45:17 [http-nio-8581-exec-2] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 403
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -5584,7 +5584,7 @@ jakarta.ws.rs.ForbiddenException: HTTP 403 Forbidden
 	at jdk.proxy4/jdk.proxy4.$Proxy213.toRepresentation(Unknown Source)
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.assignUserRole(KeycloakUserService.java:60)
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:54)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -5737,7 +5737,7 @@ jakarta.ws.rs.ForbiddenException: HTTP 403 Forbidden
 2026-03-31 17:47:17 [http-nio-8581-exec-2] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 409] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 409
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -6083,7 +6083,7 @@ Caused by: java.sql.SQLSyntaxErrorException: Table 'wigell_travel_db.customers' 
 2026-03-31 17:51:12 [http-nio-8581-exec-1] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.RuntimeException: Failed to create user in Keycloak. Status: 409] with root cause
 java.lang.RuntimeException: Failed to create user in Keycloak. Status: 409
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:44)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -6244,7 +6244,7 @@ jakarta.ws.rs.ForbiddenException: HTTP 403 Forbidden
 	at jdk.proxy4/jdk.proxy4.$Proxy213.toRepresentation(Unknown Source)
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.assignUserRole(KeycloakUserService.java:60)
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:54)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -6405,7 +6405,7 @@ jakarta.ws.rs.ForbiddenException: HTTP 403 Forbidden
 	at jdk.proxy4/jdk.proxy4.$Proxy213.toRepresentation(Unknown Source)
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.assignUserRole(KeycloakUserService.java:60)
 	at edu.vestrin.wigelltravels.service.KeycloakUserService.createUserKeycloak(KeycloakUserService.java:54)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:45)
+	at createCustomer(CustomerServiceImpl.java:45)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
@@ -6842,7 +6842,7 @@ com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Data too long
 	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:223)
 	at jdk.proxy2/jdk.proxy2.$Proxy152.save(Unknown Source)
-	at edu.vestrin.wigelltravels.service.CustomerServiceImpl.create(CustomerServiceImpl.java:54)
+	at createCustomer(CustomerServiceImpl.java:54)
 	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
 	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
 	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)

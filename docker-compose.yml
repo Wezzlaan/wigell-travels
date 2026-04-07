@@ -6,29 +6,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: wigell_travel_db
-#      MYSQL_USER: keycloak
-#      MYSQL_PASSWORD: root
     ports:
       - "6606:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:26.3.3
-#    container_name: keycloak_wigell_travels
-#    restart: unless-stopped
-#    command: start-dev
-#    depends_on:
-#      - db
-#    environment:
-#      KC_DB: mysql
-#      KC_DB_URL: jdbc:mysql://db:3306/keycloak
-#      KC_DB_USERNAME: keycloak
-#      KC_DB_PASSWORD: root
-#      KEYCLOAK_ADMIN: admin
-#      KEYCLOAK_ADMIN_PASSWORD: admin
-#    ports:
-#      - "8081:8080"
-
+      -
 volumes:
   mysql-data:
