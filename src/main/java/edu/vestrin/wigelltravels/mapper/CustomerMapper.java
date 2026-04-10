@@ -1,5 +1,6 @@
 package edu.vestrin.wigelltravels.mapper;
 
+import edu.vestrin.wigelltravels.Util.StringNormalizer;
 import edu.vestrin.wigelltravels.dto.request.CustomerWithUserRequestDto;
 import edu.vestrin.wigelltravels.dto.request.UpdateCustomerRequestDto;
 import edu.vestrin.wigelltravels.dto.response.AddressCustomerResponseDto;
@@ -13,9 +14,9 @@ import org.springframework.stereotype.Component;
 public class CustomerMapper {
 
     public Customer toEntity(CustomerWithUserRequestDto request, String keycloakId) {
-        var country = normalizedName(request.country());
-        var city = normalizedName(request.city());
-        var street = normalizedName(request.street());
+        var country = StringNormalizer.name(request.country());
+        var city = StringNormalizer.name(request.city());
+        var street = StringNormalizer.name(request.street());
 
         var address = new Address(
                 country,
@@ -24,9 +25,9 @@ public class CustomerMapper {
                 request.postalCode()
         );
 
-        var firstName = normalizedName(request.firstName());
-        var lastName = normalizedName(request.lastName());
-        var num = normalizedPhoneNum(request.phoneNum());
+        var firstName = StringNormalizer.name(request.firstName());
+        var lastName = StringNormalizer.name(request.lastName());
+        var num = StringNormalizer.phoneNumber(request.phoneNum());
 
         return new Customer(
                 keycloakId,
@@ -60,40 +61,14 @@ public class CustomerMapper {
     }
 
     public Customer applyUpdate(Customer customer, UpdateCustomerRequestDto request) {
-        customer.setFirstName(request.firstName());
-        customer.setLastName(request.lastName());
-        customer.setPhoneNum(request.phoneNum());
+        var firstName = StringNormalizer.name(request.firstName());
+        var lastName = StringNormalizer.name(request.lastName());
+        var num = StringNormalizer.phoneNumber(request.phoneNum());
+
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setPhoneNum(num);
 
         return customer;
-    }
-
-    // --- PRIVATE HELPER METHODS ---
-
-    private String normalizedPhoneNum(String dtoPhoneNum) {
-        if (dtoPhoneNum == null || dtoPhoneNum.isBlank()) return null;
-
-        String cleaned = dtoPhoneNum.replaceAll("[^0-9+]", "");
-
-        if (cleaned.startsWith("07")) {
-            cleaned = "+46" + cleaned.substring(1);
-        } else if (cleaned.startsWith("46")) {
-            cleaned = "+" + cleaned;
-        }
-
-        if (!cleaned.matches("^\\+46\\d{9}$")) throw new InvalidPhoneNumException(cleaned);
-
-        return String.format("%s %s %s %s %s",
-                cleaned.substring(0, 3),  // +46
-                cleaned.substring(3, 5),  // 70
-                cleaned.substring(5, 8),  // 123
-                cleaned.substring(8, 10), // 45
-                cleaned.substring(10, 12) // 67
-        );
-    }
-
-    private String normalizedName(String name) {
-        String cleaned = name.trim();
-
-        return cleaned.substring(0, 1).toUpperCase() + cleaned.substring(1).toLowerCase();
     }
 }

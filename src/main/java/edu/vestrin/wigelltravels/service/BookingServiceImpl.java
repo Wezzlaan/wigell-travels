@@ -1,5 +1,6 @@
 package edu.vestrin.wigelltravels.service;
 
+import com.groupc.shared.client.CurrencyClient;
 import com.groupc.shared.exception.AccessDeniedException;
 import com.groupc.shared.exception.ResourceNotFoundException;
 import edu.vestrin.wigelltravels.dto.request.BookingRequestDto;
@@ -18,6 +19,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,16 +32,19 @@ public class BookingServiceImpl implements BookingService {
     private final CustomerRepository customerRepo;
     private final DestinationRepository destinationRepo;
     private final BookingMapper mapper;
+    private final CurrencyClient currencyClient;
 
     public BookingServiceImpl(BookingRepository bookingRepo, CustomerRepository customerRepo,
-                              DestinationRepository destinationRepo, BookingMapper mapper) {
+                              DestinationRepository destinationRepo, BookingMapper mapper, CurrencyClient currencyClient) {
         this.bookingRepo = bookingRepo;
         this.customerRepo = customerRepo;
         this.destinationRepo = destinationRepo;
         this.mapper = mapper;
+        this.currencyClient = currencyClient;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingResponseDto> listById(Long customerId) {
         logger.info("listById() - Requesting bookings from customer ID: {}", customerId);
         return bookingRepo.findByCustomerId(customerId)
@@ -49,6 +54,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponseDto create(BookingRequestDto request, String keycloakId) {
 
         logger.info("createCustomer() - Requesting creation of new booking: Destination ID = {}, Departure Date = {}, Number of Weeks = {}",
@@ -75,6 +81,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingResponseDto patch(Long bookingId, PatchBookingRequestDto request) {
 
         logger.info("patch() - Requesting patch of booking with ID: {}. Requested patch: Number of Weeks = {}, Destination ID = {}, Hotel Name = {}",
@@ -123,14 +130,17 @@ public class BookingServiceImpl implements BookingService {
         return saved;
     }
 
+    // --- PRIVATE HELPER METHODS ---
+
     private BigDecimal convertTotalSEKToPLN(BigDecimal sek) {
         logger.debug("convertTotalSEKToPLN() - Calling currency exchange service for the conversion of SEK -> PLN");
 
-        return sek.multiply(BigDecimal.valueOf(0.40)); //TODO: REPLACE WITH CALL TO CURRENCY CONVERTER SERVICE
+        var exchangeRate = currencyClient.getExchangeRate("SEK", "PLN");
+        return sek.multiply(BigDecimal.valueOf(exchangeRate));
     }
 
     private void recalculateBookingPrice(Booking booking) {
-        logger.info("recalculateBookingPrice() - Recalculating total price based on updated booking details...");
+        logger.debug("recalculateBookingPrice() - Recalculating total price based on updated booking details...");
 
         BigDecimal pricePerWeek = booking.getDestination().getPricePerWeek();
         BigDecimal newSEK = pricePerWeek.multiply(BigDecimal.valueOf(booking.getNumOfWeeks()));
@@ -138,7 +148,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setTotalPriceSEK(newSEK);
         booking.setTotalPricePLN(convertTotalSEKToPLN(newSEK));
 
-        logger.info("Recalculation successful. New total SEK: {}", newSEK);
+        logger.debug("Recalculation successful. New total SEK: {}", newSEK);
     }
 
   /*  private void setBookingDestination(Booking booking, Destination destination) {

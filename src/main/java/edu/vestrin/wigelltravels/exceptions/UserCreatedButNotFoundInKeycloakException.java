@@ -1,8 +1,11 @@
 package edu.vestrin.wigelltravels.exceptions;
 
-public class UserCreatedButNotFoundInKeycloakException extends ApiRuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+public class UserCreatedButNotFoundInKeycloakException extends ResponseStatusException {
 
     public UserCreatedButNotFoundInKeycloakException() {
-        super("User created but could not be found in Keycloak.");
+        super(HttpStatus.INTERNAL_SERVER_ERROR, "User created but could not be found in Keycloak.");
     }
 }

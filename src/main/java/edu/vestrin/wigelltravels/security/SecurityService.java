@@ -42,7 +42,7 @@ public class SecurityService {
     }
 
     public boolean isBookingOwner(Long bookingId) {
-        logger.debug("isBookingOwner() called with bookingId={}", bookingId);
+        logger.info("isBookingOwner() called with bookingId={}", bookingId);
 
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (!(auth instanceof JwtAuthenticationToken jwtAuth)) {
@@ -57,7 +57,7 @@ public class SecurityService {
                         .map(booking -> booking.getCustomer().getId().equals(customer.getId())))
                 .orElse(false);
 
-        logger.debug("isBookingOwner() - result = {} for Keycloak ID = {}, Booking ID = {}", result, keycloakId, bookingId);
+        logger.info("isBookingOwner() - result = {} for Keycloak ID = {}, Booking ID = {}", result, keycloakId, bookingId);
         return result;
     }
 }

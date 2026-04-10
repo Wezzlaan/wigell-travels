@@ -30,7 +30,7 @@ public class DestinationServiceImpl implements DestinationService{
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     @PreAuthorize("hasRole('USER')")
     public List<DestinationResponseDto> findAll() {
         logger.info("findAll() - Requesting all destinations...");

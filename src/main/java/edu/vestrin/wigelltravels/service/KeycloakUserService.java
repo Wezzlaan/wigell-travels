@@ -30,7 +30,8 @@ public class KeycloakUserService {
 
     public String createUserKeycloak(String email, String username, String password, String firstName, String lastName) {
         logger.info("createUserKeycloak() - Requesting creation of Keycloak User...");
-        var user = new UserRepresentation();
+
+        UserRepresentation user = new UserRepresentation();
         user.setEmail(email);
         user.setUsername(username);
         user.setFirstName(firstName);
@@ -67,7 +68,7 @@ public class KeycloakUserService {
     public void updateUser(String keycloakId, String firstName, String lastName) {
         logger.info("updateUser() - Requesting updating Keycloak User: First Name = {}, Last Name = {}", firstName, lastName);
 
-        var user = keycloak.realm(realm).users().get(keycloakId).toRepresentation();
+        UserRepresentation user = keycloak.realm(realm).users().get(keycloakId).toRepresentation();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         keycloak.realm(realm).users().get(keycloakId).update(user);

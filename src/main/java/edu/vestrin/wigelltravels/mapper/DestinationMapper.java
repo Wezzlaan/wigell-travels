@@ -1,5 +1,6 @@
 package edu.vestrin.wigelltravels.mapper;
 
+import edu.vestrin.wigelltravels.Util.StringNormalizer;
 import edu.vestrin.wigelltravels.dto.request.DestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.request.UpdateDestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.response.DestinationResponseDto;
@@ -10,10 +11,14 @@ import org.springframework.stereotype.Component;
 public class DestinationMapper {
 
     public Destination toEntity(DestinationRequestDto request) {
+        var hotelName = StringNormalizer.name(request.hotelName());
+        var city = StringNormalizer.name(request.city());
+        var country = StringNormalizer.name(request.country());
+
         return new Destination(
-                request.hotelName(),
-                request.city(),
-                request.country(),
+                hotelName,
+                city,
+                country,
                 request.pricePerWeek()
         );
     }
@@ -32,13 +37,15 @@ public class DestinationMapper {
 
 
     public Destination applyUpdate(Destination destination, UpdateDestinationRequestDto request) {
-        destination.setHotelName(request.hotelName());
-        destination.setCity(request.city());
-        destination.setCountry(request.country());
+        var hotelName = StringNormalizer.name(request.hotelName());
+        var city = StringNormalizer.name(request.city());
+        var country = StringNormalizer.name(request.country());
+
+        destination.setHotelName(hotelName);
+        destination.setCity(city);
+        destination.setCountry(country);
         destination.setPricePerWeek(request.pricePerWeek());
 
         return destination;
     }
-
-
 }
