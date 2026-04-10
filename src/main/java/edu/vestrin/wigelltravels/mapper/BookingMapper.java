@@ -1,5 +1,6 @@
 package edu.vestrin.wigelltravels.mapper;
 
+import edu.vestrin.wigelltravels.Util.StringNormalizer;
 import edu.vestrin.wigelltravels.dto.request.BookingRequestDto;
 import edu.vestrin.wigelltravels.dto.response.BookingResponseDto;
 import edu.vestrin.wigelltravels.entity.Booking;
@@ -14,15 +15,18 @@ public class BookingMapper {
 
     public Booking toEntity(BookingRequestDto request, Customer customer,
                             Destination destination, BigDecimal totalSEK, BigDecimal totalPLN) {
+        var hotelName = StringNormalizer.name(destination.getHotelName());
+        var city = StringNormalizer.name(destination.getCity());
+        var country = StringNormalizer.name(destination.getCountry());
 
         return new Booking(
                 customer,
                 destination,
                 request.departureDate(),
                 request.numOfWeeks(),
-                destination.getHotelName(),
-                destination.getCity(),
-                destination.getCountry(),
+                hotelName,
+                city,
+                country,
                 totalSEK,
                 totalPLN
         );

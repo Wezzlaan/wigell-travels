@@ -1,7 +1,10 @@
 package edu.vestrin.wigelltravels.exceptions;
 
-public class KeycloakUserCreationException extends ApiRuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+public class KeycloakUserCreationException extends ResponseStatusException {
     public KeycloakUserCreationException(int status) {
-        super("Failed to createCustomer user in Keycloak. Status: " + status);
+        super(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create user in Keycloak. Status: " + status);
     }
 }
