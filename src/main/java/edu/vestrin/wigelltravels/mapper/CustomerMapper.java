@@ -8,12 +8,16 @@ import edu.vestrin.wigelltravels.dto.response.CustomerResponseDto;
 import edu.vestrin.wigelltravels.entity.Address;
 import edu.vestrin.wigelltravels.entity.Customer;
 import edu.vestrin.wigelltravels.exceptions.InvalidPhoneNumException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CustomerMapper {
+    private final static Logger logger = LoggerFactory.getLogger(CustomerMapper.class);
 
     public Customer toEntity(CustomerWithUserRequestDto request, String keycloakId) {
+        logger.debug("toEntity() - Konverterar DTO till entitet.");
         var country = StringNormalizer.name(request.country());
         var city = StringNormalizer.name(request.city());
         var street = StringNormalizer.name(request.street());
@@ -40,6 +44,9 @@ public class CustomerMapper {
     }
 
     public CustomerResponseDto toResponse(Customer customer) {
+        logger.debug("toResponse() - Konverterar Customer med ID: {} till DTO.", customer.getId());
+
+        logger.trace("toResponse() - Hämtar lista med Address från Customer.");
         var addresses = customer.getAddresses().stream()
                 .map(address -> new AddressCustomerResponseDto(
                         address.getId(),
@@ -61,6 +68,7 @@ public class CustomerMapper {
     }
 
     public Customer applyUpdate(Customer customer, UpdateCustomerRequestDto request) {
+        logger.debug("applyUpdate() - Applicerar uppdatering av begärd customer med ID: {}.", customer.getId());
         var firstName = StringNormalizer.name(request.firstName());
         var lastName = StringNormalizer.name(request.lastName());
         var num = StringNormalizer.phoneNumber(request.phoneNum());

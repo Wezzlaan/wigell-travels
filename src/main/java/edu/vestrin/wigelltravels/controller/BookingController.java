@@ -37,7 +37,7 @@ public class BookingController {
             JwtAuthenticationToken token) {
 
         String keycloakId = token.getToken().getSubject();
-        var created = service.create(request, keycloakId);
+        var created = service.createBooking(request, keycloakId);
         var location = URI.create("/api/v1/bookings/" + created.id());
         return ResponseEntity.created(location).body(created);
     }
@@ -47,6 +47,6 @@ public class BookingController {
     public ResponseEntity<BookingResponseDto> patch(@PathVariable Long bookingId,
                                                     @Valid @RequestBody PatchBookingRequestDto request) {
 
-        return ResponseEntity.ok(service.patch(bookingId, request));
+        return ResponseEntity.ok(service.patchBooking(bookingId, request));
     }
 }

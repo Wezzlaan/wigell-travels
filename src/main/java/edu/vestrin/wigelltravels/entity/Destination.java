@@ -29,7 +29,7 @@ public class Destination {
 
     private LocalDateTime updatedAt;
 
-    protected Destination() {}
+    public Destination() {}
 
     public Destination(String hotelName, String city, String country, BigDecimal pricePerWeek) {
         this.hotelName = hotelName;

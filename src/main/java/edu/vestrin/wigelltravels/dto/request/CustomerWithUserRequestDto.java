@@ -20,39 +20,39 @@ public record CustomerWithUserRequestDto(
 
         @NotBlank
         @Size(max = 50)
-        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Invalid characters in first name")
+        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Ogiltiga tecken i firstName")
         String firstName,
 
         @NotBlank
         @Size(max = 50)
-        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Invalid characters in last name")
+        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Ogiltiga tecken i lastName")
         String lastName,
 
         @NotBlank
-        @Pattern(regexp = "^\\d{8}-\\d{4}$", message = "Invalid SSN format, expected: YYYYMMDD-XXXX")
+        @Pattern(regexp = "^\\d{8}-\\d{4}$", message = "Ogiltigt format för socSecNum. Förväntat: YYYYMMDD-XXXX")
         String socSecNum,
 
         @NotBlank
-        @Pattern(regexp = "^[+\\d][\\d\\s\\-]{6,14}$", message = "Invalid phone number")
+        @Pattern(regexp = "^[+\\d][\\d\\s\\-]{6,14}$", message = "Ogiltigt format för phoneNum.")
         String phoneNum,
 
         @NotBlank
-        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Invalid characters in country")
+        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Ogiltiga tecken i country.")
         @Size(max = 50)
         String country,
 
         @NotBlank
-        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Invalid characters in city")
+        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ\\s\\-']+$", message = "Ogiltiga tecken i city")
         @Size(max = 50)
         String city,
 
         @NotBlank
-        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ0-9\\s\\-']+$", message = "Invalid characters in street address")
+        @Pattern(regexp = "^[a-zA-ZåäöÅÄÖéÉ0-9\\s\\-']+$", message = "Ogiltiga tecken i street")
         @Size(max = 50)
         String street,
 
         @NotBlank
-        @Pattern(regexp = "^\\d{5}$", message = "Postal code must be exactly 5 digits")
+        @Pattern(regexp = "^\\d{5}$", message = "postalCode måste vara endast siffror och ha exakt 5 tecken.")
         String postalCode
 ) {
 }

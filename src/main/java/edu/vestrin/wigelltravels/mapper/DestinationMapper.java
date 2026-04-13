@@ -5,12 +5,17 @@ import edu.vestrin.wigelltravels.dto.request.DestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.request.UpdateDestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.response.DestinationResponseDto;
 import edu.vestrin.wigelltravels.entity.Destination;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DestinationMapper {
 
+    private static final Logger logger = LoggerFactory.getLogger(DestinationMapper.class);
+
     public Destination toEntity(DestinationRequestDto request) {
+        logger.debug("toEntity() - Konverterar DTO till entitet.");
         var hotelName = StringNormalizer.name(request.hotelName());
         var city = StringNormalizer.name(request.city());
         var country = StringNormalizer.name(request.country());
@@ -24,6 +29,7 @@ public class DestinationMapper {
     }
 
     public DestinationResponseDto toResponse(Destination destination) {
+        logger.debug("toResponse() - Konverterar Destination med ID: {} till DTO.", destination.getId());
         return new DestinationResponseDto(
                 destination.getId(),
                 destination.getHotelName(),
@@ -37,6 +43,7 @@ public class DestinationMapper {
 
 
     public Destination applyUpdate(Destination destination, UpdateDestinationRequestDto request) {
+        logger.debug("applyUpdate() - Applicerar uppdatering av begärd Destination med ID: {}.", destination.getId());
         var hotelName = StringNormalizer.name(request.hotelName());
         var city = StringNormalizer.name(request.city());
         var country = StringNormalizer.name(request.country());

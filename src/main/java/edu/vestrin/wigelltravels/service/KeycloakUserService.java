@@ -29,7 +29,7 @@ public class KeycloakUserService {
     }
 
     public String createUserKeycloak(String email, String username, String password, String firstName, String lastName) {
-        logger.info("createUserKeycloak() - Requesting creation of Keycloak User...");
+        logger.info("createUserKeycloak() - Begär skapande av Keycloak User...");
 
         UserRepresentation user = new UserRepresentation();
         user.setEmail(email);
@@ -46,7 +46,7 @@ public class KeycloakUserService {
 
         var usersResource = keycloak.realm(realm).users();
 
-        logger.debug("Sending new User to Keycloak...");
+        logger.debug("createUserKeycloak() - Försöker skicka ny User till Keycloak...");
         try (var response = usersResource.create(user)) {
             int status = response.getStatus();
             if (status != 201) {
@@ -62,28 +62,29 @@ public class KeycloakUserService {
         String newKeycloakId = searchResult.getFirst().getId();
 
         assignUserRole(usersResource, newKeycloakId);
+        logger.info("createUserKeycloak() - Skapande och tillägg av User i Keycloak lyckad.");
         return newKeycloakId;
     }
 
     public void updateUser(String keycloakId, String firstName, String lastName) {
-        logger.info("updateUser() - Requesting updating Keycloak User: First Name = {}, Last Name = {}", firstName, lastName);
+        logger.info("updateUser() - Efterfrågar uppdatering av Keycloak user: First Name = {}, Last Name = {}", firstName, lastName);
 
         UserRepresentation user = keycloak.realm(realm).users().get(keycloakId).toRepresentation();
         user.setFirstName(firstName);
         user.setLastName(lastName);
+
+        logger.info("updateUser() - Begärd uppdatering lyckad.");
         keycloak.realm(realm).users().get(keycloakId).update(user);
     }
 
     public void deleteUser(String keycloakId) {
-        logger.debug("deleteUser() - Requesting deletion of Customer in Keycloak...");
+        logger.info("deleteUser() - Begär radering av Customer i Keycloak...");
         keycloak.realm(realm).users().get(keycloakId).remove();
     }
 
     private void assignUserRole(UsersResource usersResource, String userId) {
-        logger.info("assignUserRole() - Assigning role to Keycloak User with ID: {}", userId);
+        logger.info("assignUserRole() - Tilldelar roll to Keycloak User med ID: {}", userId);
         RoleRepresentation userRole = keycloak.realm(realm).roles().get("USER").toRepresentation();
         usersResource.get(userId).roles().realmLevel().add(List.of(userRole));
     }
-
-
 }

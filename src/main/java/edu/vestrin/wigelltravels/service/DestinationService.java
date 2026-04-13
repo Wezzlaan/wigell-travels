@@ -10,11 +10,11 @@ public interface DestinationService {
 
     List<DestinationResponseDto> findAll();
 
-    DestinationResponseDto create(DestinationRequestDto request);
+    DestinationResponseDto createDestination(DestinationRequestDto request);
 
-    DestinationResponseDto update(Long id, UpdateDestinationRequestDto request);
+    DestinationResponseDto updateDestination(Long id, UpdateDestinationRequestDto request);
 
-    void delete(Long id);
+    void deleteDestination(Long id);
 
 
 }

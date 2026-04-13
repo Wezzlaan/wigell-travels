@@ -50,7 +50,10 @@ public class Booking {
     @Column(name = "booked_at")
     private LocalDateTime bookedAt;
 
-    protected Booking() {
+    @Column(name = "modified_at")
+    private LocalDateTime modifiedAt;
+
+    public Booking() {
     }
 
     public Booking(Customer customer, Destination destination, LocalDate departureDate, int numOfWeeks, String hotelName,
@@ -164,8 +167,22 @@ public class Booking {
         this.bookedAt = bookedAt;
     }
 
+    public LocalDateTime getModifiedAt() {
+        return modifiedAt;
+    }
+
+    @SuppressWarnings("unused")
+    private void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.bookedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onModified() {
+        this.modifiedAt = LocalDateTime.now();
     }
 }
