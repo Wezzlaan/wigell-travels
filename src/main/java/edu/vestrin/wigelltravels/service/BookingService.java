@@ -11,7 +11,7 @@ public interface BookingService {
 
     List<BookingResponseDto> listById(Long id);
 
-    BookingResponseDto create(BookingRequestDto request, String keycloakId);
+    BookingResponseDto createBooking(BookingRequestDto request, String keycloakId);
 
-    BookingResponseDto patch(Long bookingId, PatchBookingRequestDto request);
+    BookingResponseDto patchBooking(Long bookingId, PatchBookingRequestDto request);
 }

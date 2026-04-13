@@ -7,6 +7,7 @@ import edu.vestrin.wigelltravels.dto.request.BookingRequestDto;
 import edu.vestrin.wigelltravels.dto.request.PatchBookingRequestDto;
 import edu.vestrin.wigelltravels.dto.response.BookingResponseDto;
 import edu.vestrin.wigelltravels.entity.Booking;
+import edu.vestrin.wigelltravels.entity.BookingStatus;
 import edu.vestrin.wigelltravels.entity.Destination;
 import edu.vestrin.wigelltravels.exceptions.BookingNotFoundException;
 import edu.vestrin.wigelltravels.exceptions.CustomerNotFoundException;
@@ -46,7 +47,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public List<BookingResponseDto> listById(Long customerId) {
-        logger.info("listById() - Requesting bookings from customer ID: {}", customerId);
+        logger.info("listById() - Begär Bookings från customer ID: {}", customerId);
         return bookingRepo.findByCustomerId(customerId)
                 .stream()
                 .map(mapper::toResponse)
@@ -55,9 +56,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingResponseDto create(BookingRequestDto request, String keycloakId) {
+    public BookingResponseDto createBooking(BookingRequestDto request, String keycloakId) {
 
-        logger.info("createCustomer() - Requesting creation of new booking: Destination ID = {}, Departure Date = {}, Number of Weeks = {}",
+        logger.info("createCustomer() - Efterfrågar skapande av ny Booking = {}, Departure Date = {}, Number of Weeks = {}",
                 request.destinationId(), request.departureDate(), request.numOfWeeks());
 
         var customer = customerRepo.findCustomerByKeycloakId(keycloakId)
@@ -75,16 +76,16 @@ public class BookingServiceImpl implements BookingService {
 
         var saved = mapper.toResponse(bookingRepo.save(booking));
 
-        logger.debug("Booking persisted with ID: {}", saved.id());
+        logger.debug("createCustomer() - Booking sparad med ID: {}", saved.id());
 
         return saved;
     }
 
     @Override
     @Transactional
-    public BookingResponseDto patch(Long bookingId, PatchBookingRequestDto request) {
+    public BookingResponseDto patchBooking(Long bookingId, PatchBookingRequestDto request) {
 
-        logger.info("patch() - Requesting patch of booking with ID: {}. Requested patch: Number of Weeks = {}, Destination ID = {}, Hotel Name = {}",
+        logger.info("patchBooking() - Efterfrågar patch av Booking med ID: {}. Efterfrågad patch: Number of Weeks = {}, Destination ID = {}, Hotel Name = {}",
                 bookingId, request.destinationId(), request.numOfWeeks(), request.hotelName());
 
         var booking = bookingRepo.findById(bookingId)
@@ -93,24 +94,23 @@ public class BookingServiceImpl implements BookingService {
         boolean needsPriceRecalc = false;
 
         if (request.numOfWeeks() != null) {
-            logger.info("Number of weeks contains non-null value: Updating to requested value = {}", request.numOfWeeks());
+            logger.debug("patchBooking() - numOfWeeks innehåller non-null värde: uppdaterar till begärt värde = {}", request.numOfWeeks());
             booking.setNumOfWeeks(request.numOfWeeks());
             needsPriceRecalc = true;
         }
         if (request.hotelName() != null) {
-            logger.info("Hotel Name contains non-null value: Updating to requested value = {}", request.hotelName());
+            logger.debug("patchBooking() - hotelName innehåller non-null värde: uppdaterar till begärt värde = {}", request.hotelName());
             booking.setHotelName(request.hotelName());
         }
         if (request.destinationId() != null) {
-            logger.info("Destination ID contains non-null value: " +
-                    "Finding and updating provided Destination to requested values...");
+            logger.debug("patchBooking() - Destination ID innehåller non-null värde: " +
+                    "Försöker hitta och uppdatera efterfrågad Destination till begärda värden...");
 
             var destination = destinationRepo.findById(request.destinationId())
                     .orElseThrow(() -> new DestinationNotFoundException(request.destinationId()));
 
-            logger.info("Destination found. Applying updateCustomer: Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
+            logger.debug("patchBooking() - Destination hittad. Applicerar updateCustomer: Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
                     destination.getHotelName(), destination.getCity(), destination.getCountry(), destination.getPricePerWeek());
-
 
             booking.setDestination(destination);
             booking.setCity(destination.getCity());
@@ -123,9 +123,10 @@ public class BookingServiceImpl implements BookingService {
             recalculateBookingPrice(booking);
         }
 
+        booking.setStatus(BookingStatus.MODIFIED_CONFIRMED);
         var saved = mapper.toResponse(bookingRepo.save(booking));
 
-        logger.debug("Patch of Booking with ID: {} has been persisted.", saved.id());
+        logger.info("patchBooking() - Patch av Booking med ID: {} har sparats.", saved.id());
 
         return saved;
     }
@@ -133,14 +134,14 @@ public class BookingServiceImpl implements BookingService {
     // --- PRIVATE HELPER METHODS ---
 
     private BigDecimal convertTotalSEKToPLN(BigDecimal sek) {
-        logger.debug("convertTotalSEKToPLN() - Calling currency exchange service for the conversion of SEK -> PLN");
+        logger.debug("convertTotalSEKToPLN() - Anropar currency-client service för konvertering av SEK -> PLN");
 
         var exchangeRate = currencyClient.getExchangeRate("SEK", "PLN");
         return sek.multiply(BigDecimal.valueOf(exchangeRate));
     }
 
     private void recalculateBookingPrice(Booking booking) {
-        logger.debug("recalculateBookingPrice() - Recalculating total price based on updated booking details...");
+        logger.debug("recalculateBookingPrice() - Räknar om summa med uppdaterade bokningsdetaljer...");
 
         BigDecimal pricePerWeek = booking.getDestination().getPricePerWeek();
         BigDecimal newSEK = pricePerWeek.multiply(BigDecimal.valueOf(booking.getNumOfWeeks()));
@@ -148,21 +149,6 @@ public class BookingServiceImpl implements BookingService {
         booking.setTotalPriceSEK(newSEK);
         booking.setTotalPricePLN(convertTotalSEKToPLN(newSEK));
 
-        logger.debug("Recalculation successful. New total SEK: {}", newSEK);
+        logger.debug("recalculateBookingPrice() - Kalkylering lyckad. Ny total = SEK: {}", newSEK);
     }
-
-  /*  private void setBookingDestination(Booking booking, Destination destination) {
-
-        booking.setDestination(destination);
-        booking.setCity(destination.getCity());
-        booking.setCountry(destination.getCountry());
-
-        BigDecimal newSEK = destination.getPricePerWeek()
-                .multiply(BigDecimal.valueOf(booking.getNumOfWeeks()));
-        booking.setTotalPriceSEK(newSEK);
-
-
-        booking.setTotalPricePLN(convertTotalSEKToPLN(newSEK)); // TODO: Replace with call to Currency Converter microservice.
-        logger.info("Conversion from SEK to PLN successful.");
-    }*/
 }

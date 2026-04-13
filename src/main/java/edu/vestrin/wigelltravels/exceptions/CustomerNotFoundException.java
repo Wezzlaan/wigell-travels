@@ -1,6 +1,8 @@
 package edu.vestrin.wigelltravels.exceptions;
 
-public class CustomerNotFoundException extends ApiResourceNotFoundException{
+import com.groupc.shared.exception.ResourceNotFoundException;
+
+public class CustomerNotFoundException extends ResourceNotFoundException {
     public CustomerNotFoundException(Long id) {
         super("Could not find customer with id: '%d'".formatted(id));
     }

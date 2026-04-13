@@ -1,6 +1,8 @@
 package edu.vestrin.wigelltravels.exceptions;
 
-public class BookingNotFoundException extends ApiResourceNotFoundException {
+import com.groupc.shared.exception.ResourceNotFoundException;
+
+public class BookingNotFoundException extends ResourceNotFoundException {
 
     public BookingNotFoundException(Long id) {
         super("Booking with ID: '%d' not found".formatted(id));

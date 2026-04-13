@@ -7,13 +7,17 @@ import edu.vestrin.wigelltravels.dto.request.UpdateCustomerRequestDto;
 import edu.vestrin.wigelltravels.dto.response.CustomerResponseDto;
 import edu.vestrin.wigelltravels.entity.Address;
 import edu.vestrin.wigelltravels.entity.Customer;
+import edu.vestrin.wigelltravels.exceptions.CustomerDeletionException;
 import edu.vestrin.wigelltravels.exceptions.CustomerNotFoundException;
 import edu.vestrin.wigelltravels.exceptions.OwnershipConflictException;
 import edu.vestrin.wigelltravels.mapper.CustomerMapper;
 import edu.vestrin.wigelltravels.repository.AddressRepository;
 import edu.vestrin.wigelltravels.repository.CustomerRepository;
+import jakarta.persistence.EntityManager;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,23 +28,27 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final static Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
+    private final EntityManager entityManager;
+
     private final CustomerRepository customerRepo;
     private final AddressRepository addressRepo;
     private final CustomerMapper mapper;
     private final KeycloakUserService keycloakUserService;
 
     public CustomerServiceImpl(CustomerRepository customerRepo, AddressRepository addressRepo,
-                               CustomerMapper mapper, KeycloakUserService keycloakUserService) {
+                               CustomerMapper mapper, KeycloakUserService keycloakUserService,
+                               EntityManager entityManager) {
         this.customerRepo = customerRepo;
         this.addressRepo = addressRepo;
         this.mapper = mapper;
         this.keycloakUserService = keycloakUserService;
+        this.entityManager = entityManager;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CustomerResponseDto> findAll() {
-        logger.info("findAll() - Requesting all customers...");
+        logger.info("findAll() - Begär alla customers...");
         return customerRepo.findAll().stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -49,7 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public CustomerResponseDto createCustomer(CustomerWithUserRequestDto request) {
-        logger.info("createCustomer - Requesting creation of Customer and Keycloak User...");
+        logger.info("createCustomer() - Begär skapande av Customer och Keycloak User...");
         String keycloakId = keycloakUserService.createUserKeycloak(
                 request.email(),
                 request.username(),
@@ -60,14 +68,14 @@ public class CustomerServiceImpl implements CustomerService {
 
         var customer = mapper.toEntity(request, keycloakId);
         var saved = customerRepo.save(customer);
-        logger.info("Customer persisted with ID: {}", saved.getId());
+        logger.info("createCustomer() - Customer sparad i databas med ID: {}", saved.getId());
         return mapper.toResponse(saved);
     }
 
     @Override
     @Transactional
     public CustomerResponseDto updateCustomer(Long customerId, UpdateCustomerRequestDto request) {
-        logger.info("updateCustomer() - Requesting updateCustomer of Customer with ID: {}...", customerId);
+        logger.info("updateCustomer() - Efterfrågar uppdatering av Customer med ID: {}...", customerId);
         var customer = findCustomer(customerId);
 
         keycloakUserService.updateUser(
@@ -77,15 +85,14 @@ public class CustomerServiceImpl implements CustomerService {
         );
 
         var updated = customerRepo.save(mapper.applyUpdate(customer, request));
-        logger.info("Update of Customer with ID: {} has been persisted.", updated.getId());
+        logger.info("updateCustomer() - Uppdatering av Customer med ID: {} har sparats.", updated.getId());
         return mapper.toResponse(updated);
     }
 
     @Override
     @Transactional
     public CustomerResponseDto createAddress(Long customerId, AddressRequestDto request) {
-        logger.info("createAddress - Requesting creation of Address for Customer with ID: {}.", customerId);
-
+        logger.info("createAddress() - Efterfrågar skapande av Address för Customer med ID: {}", customerId);
         var customer = findCustomer(customerId);
 
         var address = new Address(
@@ -95,31 +102,36 @@ public class CustomerServiceImpl implements CustomerService {
                 request.postalCode()
         );
         addressRepo.save(address);
-        logger.info("Address persisted with ID: {}", address.getId());
+        logger.info("createAddress() - Address sparad till databas med ID: {}", address.getId());
 
         customer.getAddresses().add(address);
 
         var saved = mapper.toResponse(customerRepo.save(customer));
-        logger.info("Address added and persisted to Customer with ID: {}", saved.id());
+        logger.info("createAddress() - Address tillagd och sparad till Customer med ID: {}", saved.id());
         return saved;
     }
 
     @Override
     @Transactional
     public void deleteCustomer(Long customerId) {
-        logger.info("Delete() - Requesting deletion of Customer with ID: {}", customerId );
+        logger.info("deleteCustomer() - Begär radering av Customer med ID: {}", customerId );
         var customer = findCustomer(customerId);
 
-        keycloakUserService.deleteUser(customer.getKeycloakId());
+        try {
+            customerRepo.delete(customer);
+            entityManager.flush();
+            keycloakUserService.deleteUser(customer.getKeycloakId());
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            throw new CustomerDeletionException("Kunde inte ta bort Customer med anledning: " + e.getMessage());
+        }
 
-        customerRepo.delete(customer);
-        logger.info("Customer with ID: {} has successfully been deleted.", customerId);
+        logger.info("deleteCustomer() - Radering av Customer med ID: {} lyckad.", customerId);
     }
 
     @Override
     @Transactional
     public void deleteAddress(Long customerId, Long addressId) {
-        logger.info("deleteAddress() - Requesting deletion of Address with ID: {} belonging to Customer with ID: {}",
+        logger.info("deleteAddress() - Begär radering av Address med ID: {} som tillhör Customer med ID: {}",
                 addressId, customerId);
 
         var customer = findCustomer(customerId);
@@ -127,19 +139,19 @@ public class CustomerServiceImpl implements CustomerService {
         var addressToRemove = customer.getAddresses().stream()
                 .filter(address -> address.getId().equals(addressId))
                 .findFirst()
-                .orElseThrow(() -> new OwnershipConflictException("Address does not belong to this customer"));
+                .orElseThrow(() -> new OwnershipConflictException("Address ägs inte av denna Customer"));
 
         customer.getAddresses().remove(addressToRemove);
 
         customerRepo.save(customer);
         addressRepo.delete(addressToRemove);
 
-        logger.debug("Address with ID: {} has been successfully deleted and removed from Customer with ID: {}",
+        logger.info("deleteAddress() - Address med ID: {} har lyckats raderas och tas bort från Customer med ID: {}",
                 addressId, customerId);
     }
 
     private Customer findCustomer(Long customerId) {
-        logger.debug("Searching for Customer with ID: {}...", customerId);
+        logger.debug("findCustomer() - Söker efter Customer med ID: {}...", customerId);
         return customerRepo.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
     }

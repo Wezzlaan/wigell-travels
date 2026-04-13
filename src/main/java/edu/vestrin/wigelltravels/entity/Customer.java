@@ -41,7 +41,7 @@ public class Customer {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    protected Customer() {}
+    public Customer() {}
 
     public Customer(String keycloakId, String firstName, String lastName, String socSecNum,
                     String phoneNum, Address address) {

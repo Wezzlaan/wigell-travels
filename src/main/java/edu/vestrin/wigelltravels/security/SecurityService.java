@@ -23,11 +23,11 @@ public class SecurityService {
     }
 
     public boolean isOwner(Long customerId) {
-        logger.info("isOwner() called with Customer ID = {}", customerId);
+        logger.info("isOwner() - Anropad med Customer ID = {}", customerId);
 
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (!(auth instanceof JwtAuthenticationToken jwtAuth)) {
-            logger.warn("isOwner() - authentication is not a JwtAuthenticationToken, denying access.");
+            logger.warn("isOwner() - Autentisering är inte av typ JwtAuthenticationToken, nekar åtkomst.");
             return false;
         }
 
@@ -37,16 +37,16 @@ public class SecurityService {
                 .map(customer -> customer.getId().equals(customerId))
                 .orElse(false);
 
-        logger.debug("isOwner() - result = {} for keycloak ID = {}, Customer ID = {}", result, keycloakId, customerId);
+        logger.debug("isOwner() - resultat = {} för keycloak ID = {}, Customer ID = {}", result, keycloakId, customerId);
         return result;
     }
 
     public boolean isBookingOwner(Long bookingId) {
-        logger.info("isBookingOwner() called with bookingId={}", bookingId);
+        logger.info("isBookingOwner() anropad med bookingId={}", bookingId);
 
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (!(auth instanceof JwtAuthenticationToken jwtAuth)) {
-            logger.warn("isBookingOwner() - authentication is not a JwtAuthenticationToken, denying access.");
+            logger.warn("isBookingOwner() - Autentisering är inte av typ JwtAuthenticationToken, nekar åtkomst.");
             return false;
         }
 
@@ -57,7 +57,7 @@ public class SecurityService {
                         .map(booking -> booking.getCustomer().getId().equals(customer.getId())))
                 .orElse(false);
 
-        logger.info("isBookingOwner() - result = {} for Keycloak ID = {}, Booking ID = {}", result, keycloakId, bookingId);
+        logger.info("isBookingOwner() - resultat = {} för Keycloak ID = {}, Booking ID = {}", result, keycloakId, bookingId);
         return result;
     }
 }

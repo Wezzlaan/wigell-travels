@@ -33,7 +33,7 @@ public class DestinationServiceImpl implements DestinationService{
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('USER')")
     public List<DestinationResponseDto> findAll() {
-        logger.info("findAll() - Requesting all destinations...");
+        logger.info("findAll() - Begär alla destinationer...");
 
         return destinationRepo.findAll().stream()
                 .map(mapper::toResponse)
@@ -43,42 +43,46 @@ public class DestinationServiceImpl implements DestinationService{
     @Override
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public DestinationResponseDto create(DestinationRequestDto request) {
-        logger.info("createCustomer() - Requesting creation of Destination: Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
+    public DestinationResponseDto createDestination(DestinationRequestDto request) {
+        logger.info("createDestination() - Begär skapande av Destination: Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
                 request.hotelName(), request.city(), request.country(), request.pricePerWeek());
 
         var destination = mapper.toEntity(request);
         var saved = destinationRepo.save(destination);
 
-        logger.debug("Destination persisted with ID: {}", saved.getId());
+        logger.info("createDestination - Destination sparad i databas with ID: {}", saved.getId());
         return mapper.toResponse(saved);
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public DestinationResponseDto update(Long id, UpdateDestinationRequestDto request) {
-        logger.info("updateCustomer() - Requesting updateCustomer of Destination with ID: {}. Requested values to updateCustomer:" +
+    public DestinationResponseDto updateDestination(Long id, UpdateDestinationRequestDto request) {
+        /*logger.info("updateCustomer() - Requesting updateCustomer of Destination with ID: {}. Requested values to updateCustomer:" +
                 "Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
+                id, request.hotelName(), request.city(), request.country(), request.pricePerWeek());*/
+
+        logger.info("updateDestination() - Begär uppdatering av Destination med ID: {}. Begärde värden:" +
+                        "Hotel Name = {}, City = {}, Country = {}, Price Per Week = {}",
                 id, request.hotelName(), request.city(), request.country(), request.pricePerWeek());
 
         var destination = destinationRepo.findById(id)
                 .orElseThrow(() -> new DestinationNotFoundException(id));
         var updated = destinationRepo.save(mapper.applyUpdate(destination, request));
 
-        logger.debug("Update of Destination with ID: {} has been persisted.", updated.getId());
+        logger.info("updateDestination() - Uppdatering av Destination med ID: {} har sparats i databas.", updated.getId());
         return mapper.toResponse(updated);
     }
 
     @Override
     @Transactional
     @PreAuthorize("hasRole('ADMIN')")
-    public void delete(Long id) {
-        logger.info("deleteCustomer() - Requesting deletion of Destination with ID: {}.", id);
+    public void deleteDestination(Long id) {
+        logger.info("deleteCustomer() - Behär borttagning av Destination med ID: {}.", id);
         var destination = destinationRepo.findById(id)
                 .orElseThrow(() -> new DestinationNotFoundException(id));
         destinationRepo.delete(destination);
 
-        logger.debug("Destination with ID: {} has successfully been deleted.", id);
+        logger.info("Destination med ID: {} har tagits bort.", id);
     }
 }

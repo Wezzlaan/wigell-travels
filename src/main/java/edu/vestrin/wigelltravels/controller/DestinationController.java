@@ -5,6 +5,8 @@ import edu.vestrin.wigelltravels.dto.request.UpdateDestinationRequestDto;
 import edu.vestrin.wigelltravels.dto.response.DestinationResponseDto;
 import edu.vestrin.wigelltravels.service.DestinationService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +17,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/destinations")
 public class DestinationController {
-
     private final DestinationService service;
 
     public DestinationController(DestinationService service) {
@@ -31,7 +32,7 @@ public class DestinationController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DestinationResponseDto> create(@Valid @RequestBody DestinationRequestDto request) {
-        var created = service.create(request);
+        var created = service.createDestination(request);
         var location = URI.create("/api/v1/destinations" + created.id());
         return ResponseEntity.created(location).body(created);
     }
@@ -42,13 +43,13 @@ public class DestinationController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateDestinationRequestDto request) {
 
-        return ResponseEntity.ok(service.update(id, request));
+        return ResponseEntity.ok(service.updateDestination(id, request));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
+        service.deleteDestination(id);
         return ResponseEntity.noContent().build();
     }
 
